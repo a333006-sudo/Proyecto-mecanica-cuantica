@@ -1,0 +1,43 @@
+OSCILADOR ARMÓNICO 1D: DIAGONALIZACIÓN TRIDIAGONAL
+m = 9.1093837139e-31 kg; omega = 1.0000000000e+15 rad/s
+hbar = 1.0545718176e-34 J s; hbar*omega = 1.0545718176e-19 J
+ell = 3.4024643417e-10 m; L = 2.0414786050e-09 m = 6 ell
+N cuenta puntos interiores; dx = 2L/(N+1).
+
+1. Cuatro niveles, N=399, L=6 ell
+ n       E_num [J]         E_analítica [J]    E_num/(hbar*omega)   error relativo [%]
+ 0    5.2725624732e-20    5.2728590882e-20       0.4999718734         0.00562532
+ 1    1.5817094123e-19    1.5818577265e-19       1.4998593608         0.00937595
+ 2    2.6360439079e-19    2.6364295441e-19       2.4996343196         0.01462722
+ 3    3.6902597141e-19    3.6910013618e-19       3.4992967310         0.02009340
+
+2. Discretización: L=6 ell fijo, errores relativos absolutos [%]
+   N       dx [m]       dx/ell       n=0          n=1          n=2          n=3
+  99   4.082957e-11   0.12000     0.0900812    0.1502441    0.2345707    0.3224906
+ 199   2.041479e-11   0.06000     0.0225051    0.0375152    0.0585355    0.0804231
+ 399   1.020739e-11   0.03000     0.0056253    0.0093759    0.0146272    0.0200934
+
+Orden observado p = log(error_anterior/error_actual) / log(dx_anterior/dx_actual)
+   cambio N         p(n=0)     p(n=1)     p(n=2)     p(n=3)
+  99 -> 199        2.00098    2.00176    2.00264    2.00358
+ 199 -> 399        2.00024    2.00044    2.00066    2.00089
+
+3. Frontera: dx/ell=0.03 fijo, errores relativos CON SIGNO [%]
+Referencia de dominio: L=9 ell con el mismo dx (no es una solución exacta).
+ L/ell    N    dx/ell      n=0          n=1          n=2          n=3      max|E-E_ref|/(hbar*omega)
+   3.0   199   0.03000    +0.0726671   +0.3960717   +1.6293028   +4.6659339        1.64011e-01
+   4.5   299   0.03000    -0.0056237   -0.0093556   -0.0144066   -0.0183123        6.23399e-05
+   6.0   399   0.03000    -0.0056253   -0.0093759   -0.0146272   -0.0200934        8.13803e-11
+   7.5   499   0.03000    -0.0056253   -0.0093759   -0.0146272   -0.0200934        2.99508e-13
+   9.0   599   0.03000    -0.0056253   -0.0093759   -0.0146272   -0.0200934        0.00000e+00
+
+La frontera de Dirichlet eleva los niveles; el error dominante de diferencias
+finitas los reduce. Pueden compensarse: un error pequeño aislado no prueba convergencia.
+La diferencia respecto al dominio mayor estima la sensibilidad a la frontera.
+El error que persiste al ampliar L, a dx fijo, se debe principalmente a la discretización.
+
+4. Normalización: dx * sum_j |psi_n(x_j)|^2 (incluidos los ceros extremos)
+ n=0: 1.000000000000000
+ n=1: 1.000000000000000
+ n=2: 1.000000000000000
+ n=3: 1.000000000000000
