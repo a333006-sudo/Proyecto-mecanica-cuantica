@@ -1,0 +1,73 @@
+POZO JOSEPHSON: POTENCIAL COMPLETO, FRONTERAS DIRICHLET
+I_c=9.4890000000e-06 A; C=6.3500000000e-12 F; I=9.4000000000e-06 A; s=0.990620718727
+E_J=3.122886629754e-21 J; m_gamma=6.877732311836e-43 J s²
+alpha=1.433727148095 rad; U(alpha)=-4.862085248856e-21 J
+Dominio inicial: [-4.575319801684, 1.707865505495] rad
+omega_p=2.490835202126e+10 rad/s; omega_p/(2 pi)=3.964287348 GHz
+Delta U=5.351409940841e-24 J; Delta U/h=8.076295330 GHz
+Energías relativas al mínimo; E/h es frecuencia, no frecuencia angular.
+
+1. Cuatro autovalores con N=4095
+ n       E [J]              E/h [Hz]          E/h [GHz]    E < Delta U
+ 0   1.277282509083e-24   1.927662219e+09   1.927662219     sí
+ 1   3.702015207014e-24   5.587044995e+09   5.587044995     sí
+ 2   6.038003412510e-24   9.112495455e+09   9.112495455     no
+ 3   8.620825843336e-24   1.301046570e+10   13.010465703     no
+
+2. Convergencia, extremos iniciales fijos
+   N     dgamma [rad]       E0/h [GHz]    E1/h [GHz]    E2/h [GHz]    E3/h [GHz]
+ 1023   0.0061359232    1.927016127   5.584207477   9.104779215  12.991926842
+ 2047   0.0030679616    1.927533042   5.586477819   9.110952935  13.006758812
+ 4095   0.0015339808    1.927662219   5.587044995   9.112495455  13.010465703
+
+Cambios entre mallas (E_fina-E_gruesa)/h [MHz]:
+ 1023 -> 2047: n=0: +0.516915237  n=1: +2.270341428  n=2: +6.173720214  n=3: +14.831970073
+ 2047 -> 4095: n=0: +0.129177531  n=1: +0.567176545  n=2: +1.542519867  n=3: +3.706891388
+ Orden p estimado por tres mallas: n=0: 2.000573  n=1: 2.001039  n=2: 2.000851  n=3: 2.000428
+ Corrección estimada (E_continuo-E4095)/h = (E4095-E2047)/(3h) [MHz]: n=0: +0.043059177  n=1: +0.189058848  n=2: +0.514173289  n=3: +1.235630463
+
+3. Fronteras: solo se mueve el extremo indicado; el otro queda fijo.
+delta gamma es el desplazamiento con signo en la coordenada gamma.
+Cambios de energía con signo respecto al dominio inicial N=4095.
+Delta E* elimina el término de error O(dgamma²) usando mallas con paso mitad.
+Delta E - Delta E* estima la contribución de discretización al cambio medido.
+
+ izquierda, desplazamiento=-0.02000 rad; N=4108
+ dominio=[-4.595319801684, 1.707865505495] rad; dgamma=1.533994964025e-03 rad
+ variación del paso=+0.00092414 %; U(extremo)/h=29343.046376533 GHz (desde el mínimo)
+ n    E_movida/h [GHz]    Delta E [J]       Delta E/h [MHz]    Delta E*/h [MHz]   (Delta E-Delta E*)/h [MHz]
+ 0    1.927662219    -5.24368561e-34   -7.913718824e-07   -4.792322584e-09   -7.865795599e-07
+ 1    5.587044992    -2.31613676e-33   -3.495490858e-06   -5.195732919e-09   -3.490295125e-06
+
+ izquierda, desplazamiento=+0.02000 rad; N=4082
+ dominio=[-4.555319801684, 1.707865505495] rad; dgamma=1.533966521474e-03 rad
+ variación del paso=-0.00093003 %; U(extremo)/h=29343.033926582 GHz (desde el mínimo)
+ n    E_movida/h [GHz]    Delta E [J]       Delta E/h [MHz]    Delta E*/h [MHz]   (Delta E-Delta E*)/h [MHz]
+ 0    1.927662220    +5.32792815e-34   +8.040856834e-07   -7.380025247e-09   +8.114657087e-07
+ 1    5.587044999    +2.33064089e-33   +3.517380350e-06   -2.437832859e-09   +3.519818183e-06
+
+ derecha, desplazamiento=-0.02000 rad; N=4082
+ dominio=[-4.575319801684, 1.687865505495] rad; dgamma=1.533966521474e-03 rad
+ variación del paso=-0.00093003 %; U(extremo)/h=7.953726567 GHz (desde el mínimo)
+ n    E_movida/h [GHz]    Delta E [J]       Delta E/h [MHz]    Delta E*/h [MHz]   (Delta E-Delta E*)/h [MHz]
+ 0    1.929634525    +1.30686326e-27   +1.972305202e+00   +1.972168171e+00   +1.370308892e-04
+ 1    5.630916910    +2.90698383e-26   +4.387191444e+01   +4.388027173e+01   -8.357295097e-03
+
+ derecha, desplazamiento=+0.02000 rad; N=4108
+ dominio=[-4.575319801684, 1.727865505495] rad; dgamma=1.533994964025e-03 rad
+ variación del paso=+0.00092414 %; U(extremo)/h=7.941276616 GHz (desde el mínimo)
+ n    E_movida/h [GHz]    Delta E [J]       Delta E/h [MHz]    Delta E*/h [MHz]   (Delta E-Delta E*)/h [MHz]
+ 0    1.926838440    -5.45842131e-28   -8.237795840e-01   -8.236893529e-01   -9.023104673e-05
+ 1    5.561820009    -1.67142530e-26   -2.522498650e+01   -2.522990792e+01   +4.921424102e-03
+
+4. Normas discretas, incluidos los ceros de frontera
+ n=0: 1.000000000000000
+ n=1: 1.000000000000000
+ n=2: 1.000000000000000
+ n=3: 1.000000000000000
+
+Los estados bajo la barrera son candidatos a niveles localizados del pozo.
+Son autovalores reales de un intervalo cerrado con Dirichlet, no energías
+complejas de resonancias ni un cálculo de tiempos de escape por túnel.
+La sensibilidad a la frontera derecha debe acompañar la precisión de malla.
+La extrapolación también está limitada por errores de orden superior y redondeo.
