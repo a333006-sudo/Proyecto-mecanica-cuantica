@@ -1,0 +1,35 @@
+UNIÓN JOSEPHSON: NIVELES DEL POZO
+I_c = 9.4890 uA   C = 6.3500 pF   I = 9.4000 uA   I/I_c = 0.99062
+
+E_J            = 3.1229e-21 J   (E_J/h = 4713.0 GHz)
+m_gamma        = 6.8777e-43 J s^2
+omega_p/2pi    = 3.9643 GHz
+Delta U / h    = 8.0763 GHz
+Delta U / hbar omega_p = 2.037
+Exponente WKB B = 36 DU/(5 hbar w_p) = 14.67
+Temperatura de cruce T* = 30.3 mK
+
+Niveles dentro del pozo: 2
+ n   E_num/h [GHz]  +- (pared) [MHz]  paredes  error malla [MHz]   armónico [GHz]  perturbativo [GHz]
+ 0       1.9262           0.10      9/9       0.026            1.9821          1.9326
+ 1       5.5301          13.70      9/9       0.106            5.9464          5.6266
+
+Transición 0->1: numérica 3.6039 GHz | armónica 3.9643 GHz | perturbativa 3.6940 GHz
+Anarmonicidad: (E1-E0)/(hbar omega_p) - 1 = -9.09%
+
+Malla: 200 puntos entre gamma_min y gamma_max; error de malla = |E(dg) - E(dg/2)|.
+Pared derecha en gamma_max + Delta_b, Delta_b/(gamma_max-gamma_min) = 0.4 ... 2.0; nivel aceptado si P_pozo > 0.9.
+Valor reportado = mediana; '+-' = intervalo máx-mín sobre las paredes.
+
+COMPARACIÓN CON EL POTENCIAL CÚBICO (Ec. 4.10)
+omega_p igual por construcción: 3.9643 GHz
+Delta U/h:   completo 8.0763 GHz | cúbico 8.1683 GHz | cociente 1.0114
+gamma_max:   completo 1.7079 rad | cúbico 1.7096 rad
+ n   E/h completo [GHz]   E/h cúbico [GHz]   diferencia [MHz]
+ 0          1.9262             1.9272           +0.92
+ 1          5.5301             5.5364           +6.25
+Exponente WKB con E = 0, B = (2/hbar) int sqrt(2 m U) dgamma:
+  integral numérica, potencial completo     B = 14.669
+  integral numérica, potencial cúbico       B = 14.836  (fórmula 36 DU_cub/(5 hbar w_p) = 14.835)
+  fórmula cúbica con la barrera EXACTA     B = 14.668
+  error en la tasa si se usa el cúbico: e^(B - B_cub) = 0.846
