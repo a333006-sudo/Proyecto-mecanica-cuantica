@@ -1,0 +1,28 @@
+ESCAPE DE LA UNIÓN JOSEPHSON
+I_c = 9.4890 uA   C = 6.3500 pF   I/I_c = 0.99062
+Barrera usada en las fórmulas: exacta (Ec. 2.20)
+
+E_J/h                    = 4713.0 GHz
+m_gamma                  = 6.8777e-43 J s^2
+omega_p/2pi              = 3.9643 GHz
+Delta U/h  (exacta)      = 8.0763 GHz
+Delta U_cub/h (cúbica)   = 8.1683 GHz   (cociente 1.0114)
+Delta U/(hbar omega_p)   = 2.0373
+lambda = 27 DU/(2 hbar w)= 27.50
+Niveles ~ DU/(hbar w)    = 2.04  (diferencias finitas: ver resumen.txt)
+
+B/hbar = 7.2 DU/(hbar w) = 14.6683
+B/hbar numérico (pot. completo, E=0) = 14.6686
+a_q                      = 74.36
+exp(-B/hbar)             = 4.2623e-07
+Gamma_q                  = 1.2565e+05 1/s   (vida media 1/Gamma_q = 7.96 us)
+T_esc^q (saturación, sin disipación) = 37.42 mK   (= T donde Gamma_t = Gamma_q, a_t = 1)
+T* = hbar w_p/(2 pi k_B) = 30.28 mK   (cruce; Devoret et al. marcan 30 mK)
+hbar w_p/(7.2 k_B)       = 26.42 mK   (igualando solo exponentes)
+ln(omega_p/2pi Gamma_q)  = 10.36   (Devoret et al. comparan en 11)
+
+Gamma total = Gamma_t + Gamma_q, con a_t = 1 (sin corrección de Kramers).
+
+CON DISIPACIÓN, Q = 30: exponente x (1 + 0.87/Q) = x 1.0290
+Gamma_q                  = 8.2115e+04 1/s
+T_esc^q                  = 35.94 mK
