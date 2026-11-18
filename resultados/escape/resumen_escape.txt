@@ -22,7 +22,3 @@ hbar w_p/(7.2 k_B)       = 26.42 mK   (igualando solo exponentes)
 ln(omega_p/2pi Gamma_q)  = 10.36   (Devoret et al. comparan en 11)
 
 Gamma total = Gamma_t + Gamma_q, con a_t = 1 (sin corrección de Kramers).
-
-CON DISIPACIÓN, Q = 30: exponente x (1 + 0.87/Q) = x 1.0290
-Gamma_q                  = 8.2115e+04 1/s
-T_esc^q                  = 35.94 mK
