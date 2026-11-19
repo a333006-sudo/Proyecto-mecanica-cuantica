@@ -60,7 +60,7 @@ python oscilador_armonico.py
 | `resumen.txt` | $E_J$, $m_\gamma$, $\omega_p$, $\Delta U$, exponente WKB, $T^*$, niveles con incertidumbre y comparación con los modelos armónico y cúbico |
 | `potencial_josephson_simple_zoom.png` | Potencial con su mínimo (negro) y máximo (rojo), Figura 2.2 |
 | `comparacion_josephson_armonico_zoom.png` | Potencial Josephson contra la aproximación armónica, Figura 2.3 |
-| `regiones_wkb.png` | Las tres regiones del cálculo WKB (pozo, bajo la barrera, onda saliente) y las funciones de onda del empalme |
+| `regiones_wkb.png` | Las tres regiones del cálculo WKB (pozo, bajo la barrera, onda saliente) sobre el potencial cúbico |
 | `pozo_y_niveles.png` | Potencial con los niveles y densidades $\lvert\psi_n\rvert^2$ |
 | `estabilizacion_frontera.png` | Autovalores contra la posición de la pared derecha |
 | `niveles_vs_corriente.png` / `.csv` | Niveles del pozo contra $I/I_c$ |

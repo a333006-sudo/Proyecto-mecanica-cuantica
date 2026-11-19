@@ -443,16 +443,13 @@ def figura_regiones_wkb(u, ruta):
     """Las tres regiones del cálculo de la tasa de escape (sección 4.1.5), sobre el
     potencial cúbico V(x) = (1/2) m w_p^2 x^2 (1 - x/l), x = gamma - gamma_min:
 
-      I   pozo (x < x_1):         estado base armónico psi_I (Ec. psiI)
-      II  bajo la barrera (x_1 < x < x_2):  solución WKB decreciente psi_II
-      III fuera (x > x_2):        onda saliente psi_III = D p^(-1/2) e^(i phi)
+      I   pozo (x < x_1):                     estado base armónico psi_I
+      II  bajo la barrera (x_1 < x < x_2):    solución WKB decreciente psi_II
+      III fuera (x > x_2):                    onda saliente psi_III
 
-    Panel (a): V(x), la energía E_0 = hbar w_p / 2 y los puntos de retorno.
-    Panel (b): |psi| en escala logarítmica con las formas usadas en el empalme,
-    incluida la solución exacta de Airy, |c_2| sqrt(Ai^2 + Bi^2), cerca de x_2.
+    x_1 y x_2 son los puntos de retorno con E_0 = hbar w_p / 2.
     """
     from scipy.optimize import brentq
-    from scipy.special import airy
     plt = estilo()
     c = PozoCubico(u)
     m, w, l = c.m, c.omega_p, c.l
@@ -466,70 +463,31 @@ def figura_regiones_wkb(u, ruta):
     x_1 = brentq(lambda x: V(x) - E0, 1e-12 * l, 2 * l / 3)
     x_2 = brentq(lambda x: V(x) - E0, 2 * l / 3, l)
 
-    # Amplitudes del empalme (Ecs. de psi_II y de D)
-    A0 = (m * w / (np.pi * hbar))**0.25
-    D = np.sqrt(4 * m * w * l * np.sqrt(m * w / (np.pi * hbar)) * np.exp(-8 * lam / 15))
-    F = 0.5 * m * w**2 * l
-    alpha = (2 * m * F / hbar**2)**(1 / 3)
-    c2 = D * np.sqrt(np.pi / (hbar * alpha))
-
     xs = np.linspace(x_izq - 0.6 * a0, 1.35 * l, 2000)
-    psi_I = A0 * np.exp(-m * w * xs**2 / (2 * hbar))
-    # Cada forma se dibuja solo donde es válida: la de Airy linealiza V cerca de
-    # x_2, así que se aleja del potencial cúbico a más de ~2/alpha de x_2.
-    xb = np.linspace(0.5 * a0, x_2 - 1.0 / alpha, 600)      # WKB, hasta cerca de x_2
-    ub = np.sqrt(1 - xb / l)
-    psi_II = A0 * 2 / ((1 + ub) * np.sqrt(ub)) * np.exp(
-        -lam * (4 / 15 - 2 / 3 * ub**3 + 2 / 5 * ub**5))
-    xo = np.linspace(x_2 + 1.5 / alpha, xs[-1], 400)
-    psi_III = D / np.sqrt(np.sqrt(2 * m * (E0 - V(xo))))       # envolvente |psi_III|
-    xa = np.linspace(x_2 - 2 / alpha, x_2 + 2.5 / alpha, 400)
-    Ai, _, Bi, _ = airy(alpha * (x_2 - xa))
-    psi_A = c2 * np.sqrt(Ai**2 + Bi**2)
-
-    GHz_ = GHz
-    fig, (ax, bx) = plt.subplots(2, 1, figsize=(9, 8.5), sharex=True, layout="constrained",
-                                 gridspec_kw={"height_ratios": [1.1, 1]})
+    fig, ax = plt.subplots(figsize=(9, 5.2), layout="constrained")
     regiones = [(xs[0], x_1, "#dbeafe", "I\nPozo\n(oscilador)"),
                 (x_1, x_2, "#fde68a", "II\nBajo la barrera\n(WKB)"),
                 (x_2, xs[-1], "#dcfce7", "III\nFuera\n(onda saliente)")]
-    for axis in (ax, bx):
-        for a, b, col, _ in regiones:
-            axis.axvspan(a, b, color=col, alpha=0.6, lw=0)
-        for xp in (x_1, x_2):
-            axis.axvline(xp, color="gray", ls=":", lw=1)
+    for a, b, col, _ in regiones:
+        ax.axvspan(a, b, color=col, alpha=0.6, lw=0)
+    for xp in (x_1, x_2):
+        ax.axvline(xp, color="gray", ls=":", lw=1)
 
-    ax.plot(xs, V(xs) / GHz_, color="#334155", lw=2.2, label=r"$V(x)$ (cúbico)")
-    ax.axhline(E0 / GHz_, color="#7e22ce", ls="--", lw=1.4,
-               label=rf"$E_0=\hbar\omega_p/2$ = {E0/GHz_:.3f} GHz")
-    ax.scatter([x_1, x_2], [E0 / GHz_] * 2, color="#7e22ce", zorder=5)
-    ax.text(x_1, -0.12 * c.dU / GHz_, r"$x_1$", ha="center", va="top", fontsize=12)
-    ax.text(x_2, -0.12 * c.dU / GHz_, r"$x_2$", ha="center", va="top", fontsize=12)
-    ytxt = 1.32 * c.dU / GHz_
+    ax.plot(xs, V(xs) / GHz, color="#334155", lw=2.2, label=r"$V(x)$ (cúbico)")
+    ax.axhline(E0 / GHz, color="#7e22ce", ls="--", lw=1.4,
+               label=rf"$E_0=\hbar\omega_p/2$ = {E0/GHz:.3f} GHz")
+    ax.scatter([x_1, x_2], [E0 / GHz] * 2, color="#7e22ce", zorder=5)
+    ax.text(x_1, -0.12 * c.dU / GHz, r"$x_1$", ha="center", va="top", fontsize=12)
+    ax.text(x_2, -0.12 * c.dU / GHz, r"$x_2$", ha="center", va="top", fontsize=12)
     for a, b, _, txt in regiones:
-        ax.text(0.5 * (a + b), ytxt, txt, ha="center", va="center", fontsize=11)
-    ax.set_ylim(-0.6 * c.dU / GHz_, 1.65 * c.dU / GHz_)
+        ax.text(0.5 * (a + b), 1.32 * c.dU / GHz, txt, ha="center", va="center", fontsize=11)
+    ax.set_xlim(xs[0], xs[-1])
+    ax.set_ylim(-0.6 * c.dU / GHz, 1.65 * c.dU / GHz)
+    ax.set_xlabel(r"$x=\gamma-\gamma_{min}$ [rad]")
     ax.set_ylabel(r"$V(x)/h$ [GHz]")
     ax.set_title(rf"Regiones del cálculo WKB ($I/I_c$ = {u.s:.5f}, $\lambda$ = {lam:.1f})",
                  fontsize=12)
     ax.legend(loc="lower left", fontsize=10)
-
-    bx.semilogy(xs, psi_I, color="#176b87", lw=2, label=r"$\psi_I$: estado base armónico")
-    bx.semilogy(xb, psi_II, color="#b45309", lw=2, ls="--", label=r"$\psi_{II}$: WKB bajo la barrera")
-    bx.semilogy(xa, psi_A, color="#be123c", lw=2, ls="-.",
-                label=r"Airy: $|c_2|\sqrt{Ai^2+Bi^2}$ cerca de $x_2$")
-    bx.semilogy(xo, psi_III, color="#15803d", lw=2,
-                label=r"$|\psi_{III}| = D/\sqrt{p}$: onda saliente")
-    for a, b, txt in [(a0, 0.4 * l, r"empalme I–II" "\n" r"$a_0\ll x\ll\ell$"),
-                      (x_2 - 2 / alpha, x_2 - 1 / alpha, "empalme\nII–Airy")]:
-        bx.axvspan(a, b, ymin=0, ymax=0.05, color="#64748b", alpha=0.7, lw=0)
-        bx.text(0.5 * (a + b), psi_III.min() / 2.5, txt, ha="center", va="bottom",
-                fontsize=10, color="#334155")
-    bx.set_ylim(psi_III.min() / 5, 3 * A0)
-    bx.set_xlim(xs[0], xs[-1])
-    bx.set_xlabel(r"$x=\gamma-\gamma_{min}$ [rad]")
-    bx.set_ylabel(r"$|\psi(x)|$ [rad$^{-1/2}$]")
-    bx.legend(loc="upper right", fontsize=10)
     fig.savefig(ruta, dpi=200)
     plt.close(fig)
 
@@ -574,7 +532,7 @@ def main():
                       "DeltaU/h [GHz],omega_p/2pi [GHz]", comments="")
     figura_vs_corriente(datos, a.salida / "niveles_vs_corriente.png")
 
-    # 3. Potencial completo contra cúbico (solo integrales, es rápido)
+    # 3. Potencial completo contra cúbico 
     comp = comparar_cubico(a.ic, a.capacitancia, np.linspace(0.90, 0.999, 100))
     np.savetxt(a.salida / "comparacion_cubico.csv", comp, delimiter=",", fmt="%.8g",
                header="I/Ic,DeltaU/(hbar omega_p),DeltaU_cub/DeltaU,B completo,"
