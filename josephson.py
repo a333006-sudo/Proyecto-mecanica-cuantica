@@ -16,8 +16,10 @@ Uso:
     python josephson.py --ic 9.489e-6 --capacitancia 6.35e-12 --corriente 9.40e-6
 
 Salidas (carpeta resultados/josephson/): resumen.txt, niveles_vs_corriente.csv,
-comparacion_cubico.csv, pozo_y_niveles.png, estabilizacion_frontera.png,
-niveles_vs_corriente.png, comparacion_cubico.png
+comparacion_cubico.csv, potencial_josephson_simple_zoom.png (Fig. 2.2),
+comparacion_josephson_armonico_zoom.png (Fig. 2.3), regiones_wkb.png,
+pozo_y_niveles.png, estabilizacion_frontera.png, niveles_vs_corriente.png,
+comparacion_cubico.png
 """
 
 import argparse
@@ -62,12 +64,6 @@ class Union:
     # --- Aproximaciones analíticas para comparar -------------------------
     def E_armonico(self, n):
         return hbar * self.omega_p * (n + 0.5)
-
-    def E_perturbativo(self, n):
-        """Oscilador + término cúbico a 2.º orden (Griffiths cap. 7):
-        E_n = hbar w (n+1/2) - (hbar w)^2 (30 n^2 + 30 n + 11) / (432 Delta U)."""
-        hw = hbar * self.omega_p
-        return hw * (n + 0.5) - hw**2 * (30 * n**2 + 30 * n + 11) / (432 * self.dU)
 
     def exponente_wkb(self):
         """Fórmula cerrada del pozo cúbico, B = 36 Delta U / (5 hbar omega_p),
@@ -223,18 +219,17 @@ def resumen(u, res, res_fino):
         "",
         f"Niveles dentro del pozo: {len(E)}",
         " n   E_num/h [GHz]  +- (pared) [MHz]  paredes  error malla [MHz]"
-        "   armónico [GHz]  perturbativo [GHz]",
+        "   armónico [GHz]",
     ]
     for i in n:
         em = f"{malla[i]/(h*1e6):9.3f}" if i < len(malla) else "      ---"
         L.append(f" {i}   {E[i]/GHz:10.4f}     {dE[i]/(h*1e6):10.2f}      {res['paredes'][i]}/{len(FRACCIONES_PARED)}   {em}"
-                 f"          {u.E_armonico(i)/GHz:8.4f}        {u.E_perturbativo(i)/GHz:8.4f}")
+                 f"          {u.E_armonico(i)/GHz:8.4f}")
     if len(E) >= 2:
         w01 = (E[1] - E[0]) / GHz
         L += ["",
               f"Transición 0->1: numérica {w01:.4f} GHz | armónica "
-              f"{u.omega_p/(2*np.pi)/1e9:.4f} GHz | perturbativa "
-              f"{(u.E_perturbativo(1)-u.E_perturbativo(0))/GHz:.4f} GHz",
+              f"{u.omega_p/(2*np.pi)/1e9:.4f} GHz",
               f"Anarmonicidad: (E1-E0)/(hbar omega_p) - 1 = "
               f"{(E[1]-E[0])/(hbar*u.omega_p) - 1:+.2%}"]
     L += ["",
@@ -316,8 +311,7 @@ def barrido_corriente(Ic, C, s_valores):
         res = niveles_pozo(u)
         for n, (En, dEn) in enumerate(zip(res["E"], res["dE"])):
             filas.append((s, n, En / GHz, dEn / GHz, u.E_armonico(n) / GHz,
-                          u.E_perturbativo(n) / GHz, u.dU / GHz,
-                          u.omega_p / (2 * np.pi) / 1e9))
+                          u.dU / GHz, u.omega_p / (2 * np.pi) / 1e9))
     return np.array(filas)
 
 
@@ -325,7 +319,7 @@ def figura_vs_corriente(datos, ruta):
     plt = estilo()
     fig, ax = plt.subplots(figsize=(8, 5.5), layout="constrained")
     s_unicos = np.unique(datos[:, 0])
-    dU = np.array([datos[datos[:, 0] == s][0, 6] for s in s_unicos])
+    dU = np.array([datos[datos[:, 0] == s][0, 5] for s in s_unicos])
     ax.plot(s_unicos, dU, color="#be123c", lw=2, label=r"$\Delta U/h$")
     for n in range(int(datos[:, 1].max()) + 1):
         d = datos[datos[:, 1] == n]
@@ -333,8 +327,6 @@ def figura_vs_corriente(datos, ruta):
                     color="#176b87", label="Numérico (diferencias finitas)" if n == 0 else None)
         ax.plot(d[:, 0], d[:, 4], color="gray", ls="--", lw=1,
                 label=r"Armónico $\hbar\omega_p(n+1/2)/h$" if n == 0 else None)
-        ax.plot(d[:, 0], d[:, 5], color="#b45309", ls=":", lw=1.5,
-                label="Perturbativo (2.º orden, cúbico)" if n == 0 else None)
     ax.set_xlabel(r"$I/I_c$")
     ax.set_ylabel(r"Energía desde el mínimo$/h$ [GHz]")
     ax.set_title("Niveles del pozo contra la corriente de polarización", fontsize=12)
@@ -399,6 +391,149 @@ def figura_cubico(u, datos, ruta):
     plt.close(fig)
 
 
+def figura_min_max(u, ruta):
+    """Figura 2.2: potencial Josephson con su mínimo (negro) y máximo (rojo), Ec. 2.19."""
+    plt = estilo()
+    ancho = u.g_max - u.g_min
+    x = np.linspace(u.g_min - 1.8 * ancho, u.g_max + 1.1 * ancho, 800)
+    fig, ax = plt.subplots(figsize=(8, 5), layout="constrained")
+    ax.plot(x, u.U(x) / GHz, color="#1d4ed8", lw=2.2, label=r"$U(\gamma)-U_{min}$")
+    ax.scatter([u.g_min], [0], color="black", s=45, zorder=5,
+               label=rf"Mínimo, $\gamma_{{min}}$ = {u.g_min:.4f} rad")
+    ax.scatter([u.g_max], [u.dU / GHz], color="#dc2626", s=45, zorder=5,
+               label=rf"Máximo, $\gamma_{{max}}$ = {u.g_max:.4f} rad")
+    ax.axhline(0, color="gray", lw=0.8, ls=":")
+    ax.axhline(u.dU / GHz, color="gray", lw=0.8, ls=":",
+               label=rf"$\Delta U/h$ = {u.dU/GHz:.3f} GHz")
+    ax.set_xlim(x[0], x[-1])
+    ax.set_ylim(-2.5 * u.dU / GHz, 5 * u.dU / GHz)
+    ax.set_xlabel(r"Diferencia de fase $\gamma$ [rad]")
+    ax.set_ylabel(r"$[U(\gamma)-U_{min}]/h$ [GHz]")
+    ax.set_title(rf"Potencial Josephson ($I/I_c$ = {u.s:.5f})", fontsize=12)
+    ax.legend(loc="upper right")
+    fig.savefig(ruta, dpi=200)
+    plt.close(fig)
+
+
+def figura_armonico(u, ruta):
+    """Figura 2.3: potencial Josephson contra su aproximación armónica
+    U_OA = (1/2) m_gamma omega_p^2 (gamma - gamma_min)^2   (Ecs. 2.22-2.24)."""
+    plt = estilo()
+    ancho = u.g_max - u.g_min
+    x = np.linspace(u.g_min - 0.9 * ancho, u.g_max + 0.5 * ancho, 800)
+    U_oa = 0.5 * u.m * u.omega_p**2 * (x - u.g_min)**2
+    fig, ax = plt.subplots(figsize=(8, 5), layout="constrained")
+    ax.plot(x, u.U(x) / GHz, color="#1d4ed8", lw=2.2, label="Potencial Josephson")
+    ax.plot(x, U_oa / GHz, color="#ea580c", lw=2, ls="--",
+            label=r"Aproximación armónica, $\frac{1}{2}m_\gamma\omega_p^2(\gamma-\gamma_{min})^2$")
+    ax.scatter([u.g_min], [0], color="black", s=40, zorder=5)
+    ax.scatter([u.g_max], [u.dU / GHz], color="#dc2626", s=40, zorder=5)
+    ax.set_xlim(x[0], x[-1])
+    ax.set_ylim(-0.6 * u.dU / GHz, 3.1 * u.dU / GHz)
+    ax.set_xlabel(r"Diferencia de fase $\gamma$ [rad]")
+    ax.set_ylabel(r"$[U(\gamma)-U_{min}]/h$ [GHz]")
+    ax.set_title(rf"Potencial Josephson y aproximación armónica ($I/I_c$ = {u.s:.5f}, "
+                 rf"$\omega_p/2\pi$ = {u.omega_p/(2*np.pi)/1e9:.3f} GHz)", fontsize=12)
+    ax.legend(loc="upper left")
+    fig.savefig(ruta, dpi=200)
+    plt.close(fig)
+
+
+def figura_regiones_wkb(u, ruta):
+    """Las tres regiones del cálculo de la tasa de escape (sección 4.1.5), sobre el
+    potencial cúbico V(x) = (1/2) m w_p^2 x^2 (1 - x/l), x = gamma - gamma_min:
+
+      I   pozo (x < x_1):         estado base armónico psi_I (Ec. psiI)
+      II  bajo la barrera (x_1 < x < x_2):  solución WKB decreciente psi_II
+      III fuera (x > x_2):        onda saliente psi_III = D p^(-1/2) e^(i phi)
+
+    Panel (a): V(x), la energía E_0 = hbar w_p / 2 y los puntos de retorno.
+    Panel (b): |psi| en escala logarítmica con las formas usadas en el empalme,
+    incluida la solución exacta de Airy, |c_2| sqrt(Ai^2 + Bi^2), cerca de x_2.
+    """
+    from scipy.optimize import brentq
+    from scipy.special import airy
+    plt = estilo()
+    c = PozoCubico(u)
+    m, w, l = c.m, c.omega_p, c.l
+    E0 = 0.5 * hbar * w
+    lam = m * w * l**2 / hbar                       # lambda = (l/a_0)^2
+    a0 = np.sqrt(hbar / (m * w))
+    V = lambda x: 0.5 * m * w**2 * x**2 * (1 - x / l)
+
+    # Puntos de retorno con E = E_0: x_izq < 0 < x_1 < x_2 < l
+    x_izq = brentq(lambda x: V(x) - E0, -l, 0)
+    x_1 = brentq(lambda x: V(x) - E0, 1e-12 * l, 2 * l / 3)
+    x_2 = brentq(lambda x: V(x) - E0, 2 * l / 3, l)
+
+    # Amplitudes del empalme (Ecs. de psi_II y de D)
+    A0 = (m * w / (np.pi * hbar))**0.25
+    D = np.sqrt(4 * m * w * l * np.sqrt(m * w / (np.pi * hbar)) * np.exp(-8 * lam / 15))
+    F = 0.5 * m * w**2 * l
+    alpha = (2 * m * F / hbar**2)**(1 / 3)
+    c2 = D * np.sqrt(np.pi / (hbar * alpha))
+
+    xs = np.linspace(x_izq - 0.6 * a0, 1.35 * l, 2000)
+    psi_I = A0 * np.exp(-m * w * xs**2 / (2 * hbar))
+    # Cada forma se dibuja solo donde es válida: la de Airy linealiza V cerca de
+    # x_2, así que se aleja del potencial cúbico a más de ~2/alpha de x_2.
+    xb = np.linspace(0.5 * a0, x_2 - 1.0 / alpha, 600)      # WKB, hasta cerca de x_2
+    ub = np.sqrt(1 - xb / l)
+    psi_II = A0 * 2 / ((1 + ub) * np.sqrt(ub)) * np.exp(
+        -lam * (4 / 15 - 2 / 3 * ub**3 + 2 / 5 * ub**5))
+    xo = np.linspace(x_2 + 1.5 / alpha, xs[-1], 400)
+    psi_III = D / np.sqrt(np.sqrt(2 * m * (E0 - V(xo))))       # envolvente |psi_III|
+    xa = np.linspace(x_2 - 2 / alpha, x_2 + 2.5 / alpha, 400)
+    Ai, _, Bi, _ = airy(alpha * (x_2 - xa))
+    psi_A = c2 * np.sqrt(Ai**2 + Bi**2)
+
+    GHz_ = GHz
+    fig, (ax, bx) = plt.subplots(2, 1, figsize=(9, 8.5), sharex=True, layout="constrained",
+                                 gridspec_kw={"height_ratios": [1.1, 1]})
+    regiones = [(xs[0], x_1, "#dbeafe", "I\nPozo\n(oscilador)"),
+                (x_1, x_2, "#fde68a", "II\nBajo la barrera\n(WKB)"),
+                (x_2, xs[-1], "#dcfce7", "III\nFuera\n(onda saliente)")]
+    for axis in (ax, bx):
+        for a, b, col, _ in regiones:
+            axis.axvspan(a, b, color=col, alpha=0.6, lw=0)
+        for xp in (x_1, x_2):
+            axis.axvline(xp, color="gray", ls=":", lw=1)
+
+    ax.plot(xs, V(xs) / GHz_, color="#334155", lw=2.2, label=r"$V(x)$ (cúbico)")
+    ax.axhline(E0 / GHz_, color="#7e22ce", ls="--", lw=1.4,
+               label=rf"$E_0=\hbar\omega_p/2$ = {E0/GHz_:.3f} GHz")
+    ax.scatter([x_1, x_2], [E0 / GHz_] * 2, color="#7e22ce", zorder=5)
+    ax.text(x_1, -0.12 * c.dU / GHz_, r"$x_1$", ha="center", va="top", fontsize=12)
+    ax.text(x_2, -0.12 * c.dU / GHz_, r"$x_2$", ha="center", va="top", fontsize=12)
+    ytxt = 1.32 * c.dU / GHz_
+    for a, b, _, txt in regiones:
+        ax.text(0.5 * (a + b), ytxt, txt, ha="center", va="center", fontsize=11)
+    ax.set_ylim(-0.6 * c.dU / GHz_, 1.65 * c.dU / GHz_)
+    ax.set_ylabel(r"$V(x)/h$ [GHz]")
+    ax.set_title(rf"Regiones del cálculo WKB ($I/I_c$ = {u.s:.5f}, $\lambda$ = {lam:.1f})",
+                 fontsize=12)
+    ax.legend(loc="lower left", fontsize=10)
+
+    bx.semilogy(xs, psi_I, color="#176b87", lw=2, label=r"$\psi_I$: estado base armónico")
+    bx.semilogy(xb, psi_II, color="#b45309", lw=2, ls="--", label=r"$\psi_{II}$: WKB bajo la barrera")
+    bx.semilogy(xa, psi_A, color="#be123c", lw=2, ls="-.",
+                label=r"Airy: $|c_2|\sqrt{Ai^2+Bi^2}$ cerca de $x_2$")
+    bx.semilogy(xo, psi_III, color="#15803d", lw=2,
+                label=r"$|\psi_{III}| = D/\sqrt{p}$: onda saliente")
+    for a, b, txt in [(a0, 0.4 * l, r"empalme I–II" "\n" r"$a_0\ll x\ll\ell$"),
+                      (x_2 - 2 / alpha, x_2 - 1 / alpha, "empalme\nII–Airy")]:
+        bx.axvspan(a, b, ymin=0, ymax=0.05, color="#64748b", alpha=0.7, lw=0)
+        bx.text(0.5 * (a + b), psi_III.min() / 2.5, txt, ha="center", va="bottom",
+                fontsize=10, color="#334155")
+    bx.set_ylim(psi_III.min() / 5, 3 * A0)
+    bx.set_xlim(xs[0], xs[-1])
+    bx.set_xlabel(r"$x=\gamma-\gamma_{min}$ [rad]")
+    bx.set_ylabel(r"$|\psi(x)|$ [rad$^{-1/2}$]")
+    bx.legend(loc="upper right", fontsize=10)
+    fig.savefig(ruta, dpi=200)
+    plt.close(fig)
+
+
 # ---------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
@@ -425,6 +560,9 @@ def main():
     texto = resumen(u, res, res_fino) + "\n" + resumen_cubico(u, res, res_cub)
     print(texto)
     (a.salida / "resumen.txt").write_text(texto + "\n", encoding="utf-8")
+    figura_min_max(u, a.salida / "potencial_josephson_simple_zoom.png")         # Fig. 2.2
+    figura_armonico(u, a.salida / "comparacion_josephson_armonico_zoom.png")    # Fig. 2.3
+    figura_regiones_wkb(u, a.salida / "regiones_wkb.png")                       # regiones WKB
     figura_pozo(u, res, a.salida / "pozo_y_niveles.png")
     figura_estabilizacion(u, res, a.salida / "estabilizacion_frontera.png")
 
@@ -433,7 +571,7 @@ def main():
     datos = barrido_corriente(a.ic, a.capacitancia, s_valores)
     np.savetxt(a.salida / "niveles_vs_corriente.csv", datos, delimiter=",", fmt="%.8g",
                header="I/Ic,n,E_n/h [GHz],intervalo pared [GHz],armonico [GHz],"
-                      "perturbativo [GHz],DeltaU/h [GHz],omega_p/2pi [GHz]", comments="")
+                      "DeltaU/h [GHz],omega_p/2pi [GHz]", comments="")
     figura_vs_corriente(datos, a.salida / "niveles_vs_corriente.png")
 
     # 3. Potencial completo contra cúbico (solo integrales, es rápido)

@@ -57,7 +57,10 @@ python oscilador_armonico.py
 
 | Archivo | Contenido |
 |---|---|
-| `resumen.txt` | $E_J$, $m_\gamma$, $\omega_p$, $\Delta U$, exponente WKB, $T^*$, niveles con incertidumbre y comparación con los modelos armónico, perturbativo y cúbico |
+| `resumen.txt` | $E_J$, $m_\gamma$, $\omega_p$, $\Delta U$, exponente WKB, $T^*$, niveles con incertidumbre y comparación con los modelos armónico y cúbico |
+| `potencial_josephson_simple_zoom.png` | Potencial con su mínimo (negro) y máximo (rojo), Figura 2.2 |
+| `comparacion_josephson_armonico_zoom.png` | Potencial Josephson contra la aproximación armónica, Figura 2.3 |
+| `regiones_wkb.png` | Las tres regiones del cálculo WKB (pozo, bajo la barrera, onda saliente) y las funciones de onda del empalme |
 | `pozo_y_niveles.png` | Potencial con los niveles y densidades $\lvert\psi_n\rvert^2$ |
 | `estabilizacion_frontera.png` | Autovalores contra la posición de la pared derecha |
 | `niveles_vs_corriente.png` / `.csv` | Niveles del pozo contra $I/I_c$ |
@@ -81,8 +84,6 @@ python oscilador_armonico.py
    La convergencia es de orden 2, como se espera.
 4. **Comparaciones.**
    - Oscilador armónico, $\hbar\omega_p(n+\tfrac12)$.
-   - Teoría de perturbaciones a segundo orden para el término cúbico,
-     $E_n \approx \hbar\omega_p(n+\tfrac12) - (\hbar\omega_p)^2(30n^2+30n+11)/(432\,\Delta U)$.
    - Potencial cúbico resuelto con el mismo método.
    - Exponente WKB $B = \frac{2}{\hbar}\int\sqrt{2m_\gamma U}\,d\gamma$,
      calculado por integración numérica en ambos potenciales.
@@ -95,7 +96,7 @@ python -m unittest discover tests
 
 Las pruebas verifican lo siguiente:
 - las fórmulas cerradas de $\omega_p$ y $\Delta U$;
-- el acuerdo con la teoría de perturbaciones en un pozo profundo;
+- que en un pozo profundo el nivel base tienda al del oscilador armónico;
 - la estabilidad de los niveles respecto a la pared;
 - la convergencia de segundo orden;
 - que la integral WKB en el pozo cúbico reproduzca $\frac{36}{5}\Delta U_{cub}/\hbar\omega_p$;

@@ -24,13 +24,15 @@ class PruebasJosephson(unittest.TestCase):
         self.assertAlmostEqual(u.omega_p / wp, 1.0, places=12)
         self.assertAlmostEqual(u.dU / dU, 1.0, places=9)
 
-    def test_pozo_profundo_coincide_con_perturbaciones(self):
-        # Con Delta U >> hbar omega_p la teoría de perturbaciones debe funcionar.
+    def test_pozo_profundo_tiende_al_armonico(self):
+        # Con Delta U >> hbar omega_p el nivel base debe ser casi hbar omega_p / 2,
+        # y la anarmonicidad debe bajar todos los niveles respecto al oscilador.
         u = Union(IC, C, 0.95)
         E = niveles_pozo(u)["E"]
         hw = hbar * u.omega_p
+        self.assertLess(abs(E[0] - u.E_armonico(0)) / hw, 0.005)
         for n in range(3):
-            self.assertLess(abs(E[n] - u.E_perturbativo(n)) / hw, 0.005)
+            self.assertLess(E[n], u.E_armonico(n))
 
     def test_niveles_estables_respecto_a_la_pared(self):
         # El nivel base no debe depender de dónde se ponga la pared derecha.
