@@ -62,5 +62,17 @@ class PruebasJosephson(unittest.TestCase):
         self.assertLess(cocientes[2] - 1, 0.002)
 
 
+    def test_I0_coincide_con_el_oscilador(self):
+        # Con I = 0 los niveles bajos deben ser hbar omega_p0 (n + 1/2) y el error
+        # de malla debe bajar como Delta gamma^2.
+        from validacion_I0 import PASOS, UnionSinCorriente, niveles
+        u = UnionSinCorriente(IC, C)
+        E = [niveles(u, p, 4)[2] for p in PASOS]
+        arm = u.E_armonico(np.arange(4))
+        self.assertTrue(np.all(np.abs(E[-1] - arm) / arm < 1e-3))
+        orden = np.log2((E[0] - E[1]) / (E[1] - E[2]))
+        self.assertTrue(np.allclose(orden, 2.0, atol=0.05))
+
+
 if __name__ == "__main__":
     unittest.main()

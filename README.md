@@ -17,6 +17,8 @@ $$U(\gamma) = -E_J\left(\cos\gamma + \frac{I}{I_c}\gamma\right),\qquad E_J = \fr
 ```
 josephson.py              Programa principal (niveles, barrido en I/Ic, comparación cúbica)
 oscilador_armonico.py     Validación del método con el oscilador armónico (solución exacta)
+validacion_I0.py          Validación con el potencial Josephson sin corriente (I = 0)
+escape.py                 Tasas de escape cuántico y térmico, temperatura de escape
 requirements.txt          numpy, scipy, matplotlib
 tests/                    Pruebas automáticas
 resultados/               Salidas (se generan al ejecutar)
@@ -51,6 +53,23 @@ Para la validación con el oscilador armónico:
 
 ```powershell
 python oscilador_armonico.py
+```
+
+Para la validación con el potencial Josephson sin corriente ($I = 0$, pequeñas
+oscilaciones), que genera `resultados/validacion_I0/` (`resumen_I0.txt`,
+`tabla_I0.tex` y `validacion_I0.png`):
+
+```powershell
+python validacion_I0.py
+```
+
+Para las tasas de escape y la temperatura de escape, que generan
+`resultados/escape/` (`resumen_escape.txt`, `tabla_parametros.tex`,
+`escape_vs_T.csv` y `escape_vs_T.png`):
+
+```powershell
+python escape.py            # sin disipación
+python escape.py --Q 30     # con la corrección por disipación (Devoret et al.)
 ```
 
 ## Salidas (`resultados/josephson/`)

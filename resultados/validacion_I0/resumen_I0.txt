@@ -1,0 +1,28 @@
+VALIDACIÓN CON EL POTENCIAL JOSEPHSON SIN CORRIENTE (I = 0)
+I_c = 9.4890 uA   C = 6.3500 pF
+E_J/h            = 4713.0 GHz
+omega_p0/2pi     = 10.7245 GHz
+2 E_J/(hbar w)   = 879   (barrera en +-pi, en cuantos)
+a_0              = 0.04770 rad
+
+Malla más fina: Delta gamma = 0.03 a_0 (4390 puntos interiores)
+ n   E_num/h [GHz]   hbar w_p0 (n+1/2)/h [GHz]   diferencia relativa [%]
+ 0        5.36117           5.36223               -0.0198
+ 1       16.08138          16.08670               -0.0331
+ 2       26.79733          26.81116               -0.0516
+ 3       37.50902          37.53562               -0.0709
+
+Convergencia con la malla, (E_n - E_n^arm)/(hbar w_p0):
+ Dg/a0        n=0         n=1         n=2         n=3    
+  0.12    -5.210e-04  -2.606e-03  -6.778e-03  -1.304e-02
+  0.06    -1.835e-04  -9.175e-04  -2.385e-03  -4.587e-03
+  0.03    -9.923e-05  -4.961e-04  -1.290e-03  -2.481e-03
+ ->0     -7.113e-05  -3.557e-04  -9.248e-04  -1.779e-03   (extrapolación de Richardson)
+
+Orden de convergencia observado (mallas sucesivas, factor 2 en el paso): 2.00, 2.00, 2.00, 2.00
+
+El error de discretización baja como Delta gamma^2. Lo que queda al extrapolar a
+Delta gamma -> 0 es físico: el coseno es más abierto que la parábola, así que los
+niveles quedan por debajo del armónico y la diferencia crece con n.
+Para n = 0 el corrimiento es -7.1e-05 hbar w_p0; el valor esperado del término
+-E_J gamma^4/24 en el estado base es -(hbar w_p0)^2/(32 E_J) = -7.1e-05 hbar w_p0.
