@@ -120,3 +120,22 @@ Las pruebas verifican lo siguiente:
 - la convergencia de segundo orden;
 - que la integral WKB en el pozo cúbico reproduzca $\frac{36}{5}\Delta U_{cub}/\hbar\omega_p$;
 - que el potencial cúbico sobrestime la barrera y converja al exacto cuando $I \to I_c$.
+
+
+## Figuras y tablas del reporte
+
+| Reporte | Comando | Archivo generado |
+|---|---|---|
+| Figura 2.1 (circuito) | No la genera el código | — |
+| Figura 2.2 | `python josephson.py` | `resultados/josephson/potencial_josephson_simple_zoom.png` |
+| Figura 2.3 | `python josephson.py` | `resultados/josephson/comparacion_josephson_armonico_zoom.png` |
+| Sec. 3.2 (oscilador armónico) | `python oscilador_armonico.py` | `resultados/informe.txt` |
+| Figura 3.1 y Tabla 3.1 | `python validacion_I0.py` | `resultados/validacion_I0/validacion_I0.png`, `tabla_I0.tex` |
+| Figura 4.1 | `python josephson.py` | `resultados/josephson/regiones_wkb.png` |
+| Tabla 5.1 | `python escape.py` | `resultados/escape/tabla_parametros.tex` (número de niveles en `resultados/josephson/resumen.txt`) |
+| Figura 5.1 | `python josephson.py` | `resultados/josephson/pozo_y_niveles.png` |
+| Tabla 5.2 | `python josephson.py` | `resultados/josephson/resumen.txt` |
+| Figura 5.2 | `python josephson.py` | `resultados/josephson/niveles_vs_corriente.png` |
+| Figura 5.3 | `python josephson.py` | `resultados/josephson/comparacion_cubico.png` |
+| Figura 5.4 | `python escape.py` | `resultados/escape/escape_vs_T.png` |
+| Tabla 5.3 (con disipación) | `python escape.py --Q 30` | `resultados/escape/resumen_escape.txt` |
